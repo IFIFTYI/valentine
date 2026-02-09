@@ -5,6 +5,18 @@
 <title>Valentine 💘</title>
 
 <style>
+  .yes-img {
+  width: 90%;
+  max-width: 450px;
+  height: auto;
+  margin: 20px 0;
+}
+  .main-img {
+  width: 90%;
+  max-width: 420px;
+  height: auto;
+  margin-bottom: 20px;
+}
 body {
   margin: 0;
   height: 100vh;
@@ -52,7 +64,7 @@ button {
 <div class="box">
   <h1>💖 Will you be my Valentine ayacita? 💖</h1>
 
-<img src="first.jpg" width="400" alt="first image"><br><br>
+<img src="first.jpg" class="main-img"><br><br>
 
   <button id="yes" onclick="yesClicked()">Yes 💘</button>
   <button id="no">No 💔</button>
@@ -104,7 +116,7 @@ function yesClicked() {
     ">
       <h1>💕 Yay! I knew it! 💕</h1>
       <p style="font-size:22px;">Happy Valentine 💘</p>
-      <img src="yes.jpg" width="400" style="margin:20px 0;">
+      <img src="yes.jpg" class="yes-img">
     </div>
   `;
 }
