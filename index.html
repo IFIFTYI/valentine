@@ -66,6 +66,7 @@ button {
   position: absolute;
 }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
@@ -74,6 +75,9 @@ button {
   <h1>💖 Will you be my Valentine ayacita? 💖</h1>
 
 <img src="first.jpg" class="main-img"><br><br>
+<p id="no-counter" style="font-size:18px; color:#333;">
+  Number of NO attempts: 0 😈
+</p>
 
   <button id="yes" onclick="yesClicked()">Yes 💘</button>
   <button id="no">No 💔</button>
@@ -87,7 +91,7 @@ button {
 <script>
 const noBtn = document.getElementById("no");
 const sound = document.getElementById("escapeSound");
-
+let noCount = 0;
 // حركة الهروب + الصوت
 function moveButton() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
@@ -98,7 +102,13 @@ function moveButton() {
 
   sound.currentTime = 0;
   sound.play().catch(()=>{});
+  noCount++;
+document.getElementById("no-counter").innerText =
+  `Number of NO attempts: ${noCount} 😈`;
+  const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+yesBtn.style.fontSize = (currentSize + 2) + "px";
 }
+  
 
 // ماوس
 noBtn.addEventListener("mouseover", moveButton);
@@ -108,12 +118,26 @@ noBtn.addEventListener("touchstart", function(e) {
   e.preventDefault();
   moveButton();
 });
-
+confetti({
+  particleCount: 150,
+  spread: 90,
+  origin: { y: 0.6 }
+});
 // أكشن YES 💘
-function yesClicked() {
+yesBtn.addEventListener("click", () => {
+
+  alert("💖 I knew you would say YES, Ayacita 💖");
+
+  confetti({
+    particleCount: 150,
+    spread: 90,
+    origin: { y: 0.6 }
+  });
+
   document.body.innerHTML = `
     <div style="
-      height:100vh;
+      width:100%;
+      height:100%;
       background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
       display:flex;
       flex-direction:column;
@@ -124,11 +148,11 @@ function yesClicked() {
       text-align:center;
     ">
       <h1>💕 Yay! I knew it! 💕</h1>
-      <p style="font-size:22px;">Happy Valentine 💘</p>
       <img src="yes.jpg" class="yes-img">
+      <p style="font-size:22px;">Happy Valentine 💘</p>
     </div>
   `;
-}
+});
 </script>
 
 </body>
