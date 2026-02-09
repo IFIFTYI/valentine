@@ -8,16 +8,21 @@
 body {
   margin: 0;
   height: 100vh;
-  background: pink;
+  background: linear-gradient(135deg, pink, #ffb6c1);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
 .box {
   text-align: center;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 20px;
 }
 
 button {
@@ -46,32 +51,63 @@ button {
 
 <div class="box">
   <h1>💖 Will you be my Valentine? 💖</h1>
-  <button id="yes">Yes 💘</button>
+
+  <img src="https://i.imgur.com/1X6R8Jp.png" width="150" alt="love"><br><br>
+
+  <button id="yes" onclick="yesClicked()">Yes 💘</button>
   <button id="no">No 💔</button>
 </div>
 
- 
-<script>
-   <audio id="escapeSound" preload="auto">
+<!-- 🔊 صوت الهروب -->
+<audio id="escapeSound" preload="auto">
   <source src="NOPE.mp3" type="audio/mpeg">
 </audio>
-  
-const noBtn = document.getElementById("no");
 
+<script>
+const noBtn = document.getElementById("no");
+const sound = document.getElementById("escapeSound");
+
+// حركة الهروب + الصوت
 function moveButton() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
+
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
 }
 
+// ماوس
 noBtn.addEventListener("mouseover", moveButton);
 
+// موبايل
 noBtn.addEventListener("touchstart", function(e) {
   e.preventDefault();
   moveButton();
 });
+
+// أكشن YES 💘
+function yesClicked() {
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+    ">
+      <h1>💕 Yay! I knew it! 💕</h1>
+      <p style="font-size:22px;">Happy Valentine 💘</p>
+      <img src="https://i.imgur.com/1X6R8Jp.png" width="220">
+    </div>
+  `;
+}
 </script>
 
 </body>
