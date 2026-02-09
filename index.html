@@ -5,19 +5,21 @@
 <title>Valentine 💘</title>
 
 <style>
-  .yes-img {
+.yes-img {
   width: 120%;
   max-width: 450px;
   height: auto;
   margin: 20px 0;
 }
-  .main-img {
+
+.main-img {
   width: 120%;
   max-width: 420px;
   height: auto;
   margin-bottom: 20px;
 }
-  .main-img,
+
+.main-img,
 .yes-img {
   transition: transform 0.3s ease;
 }
@@ -26,6 +28,7 @@
 .yes-img:hover {
   transform: scale(1.05);
 }
+
 body {
   margin: 0;
   height: 100vh;
@@ -66,7 +69,8 @@ button {
   position: absolute;
 }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
@@ -74,25 +78,34 @@ button {
 <div class="box">
   <h1>💖 Will you be my Valentine ayacita? 💖</h1>
 
-<img src="first.jpg" class="main-img"><br><br>
-<p id="no-counter" style="font-size:18px; color:#333;">
-  Number of NO attempts: 0 😈
-</p>
+  <img src="first.jpg" class="main-img"><br><br>
 
-  <button id="yes" onclick="yesClicked()">Yes 💘</button>
+  <p id="no-counter" style="font-size:18px; color:#333;">
+    Number of NO attempts: 0 😈
+  </p>
+
+  <button id="yes">Yes 💘</button>
   <button id="no">No 💔</button>
 </div>
 
-<!-- 🔊 صوت الهروب -->
-<audio id="escapeSound" preload="auto">
-  <source src="NOPE.mp3" type="audio/mpeg">
-</audio>
+<audio id="escapeSound" src="NOPE.mp3"></audio>
 
 <script>
 const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
 const sound = document.getElementById("escapeSound");
+
 let noCount = 0;
-// حركة الهروب + الصوت
+
+// فتح إذن الصوت (مهم للموبايل)
+document.body.addEventListener("click", () => {
+  sound.play().then(() => {
+    sound.pause();
+    sound.currentTime = 0;
+  }).catch(()=>{});
+}, { once: true });
+
+// حركة NO + الصوت + العداد + تكبير YES
 function moveButton() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
@@ -102,35 +115,32 @@ function moveButton() {
 
   sound.currentTime = 0;
   sound.play().catch(()=>{});
+
   noCount++;
-document.getElementById("no-counter").innerText =
-  `Number of NO attempts: ${noCount} 😈`;
+  document.getElementById("no-counter").innerText =
+    `Number of NO attempts: ${noCount} 😈`;
+
   const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-yesBtn.style.fontSize = (currentSize + 2) + "px";
+  yesBtn.style.fontSize = (currentSize + 2) + "px";
 }
-  
 
-// ماوس
-noBtn.addEventListener("mouseover", moveButton);
+// PC
+noBtn.addEventListener("mouseenter", moveButton);
 
-// موبايل
+// Mobile
 noBtn.addEventListener("touchstart", function(e) {
   e.preventDefault();
   moveButton();
 });
-confetti({
-  particleCount: 150,
-  spread: 90,
-  origin: { y: 0.6 }
-});
-// أكشن YES 💘
+
+// YES action 💘
 yesBtn.addEventListener("click", () => {
 
   alert("💖 I knew you would say YES, Ayacita 💖");
 
   confetti({
-    particleCount: 150,
-    spread: 90,
+    particleCount: 180,
+    spread: 100,
     origin: { y: 0.6 }
   });
 
