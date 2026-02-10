@@ -19,11 +19,19 @@ body {
 .box {
   text-align: center;
   position: relative;
+  /* نحتاج هذا لضمان أن العناصر داخله تتحرك بالنسبة له أو للشاشة */
+  width: 100%; 
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {
   font-size: 42px;
   margin-bottom: 20px;
+  z-index: 2;
 }
 
 button {
@@ -32,20 +40,21 @@ button {
   border-radius: 12px;
   border: none;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
 #yes {
   background: #ff4d6d;
   color: white;
   margin-right: 20px;
-  position: relative;
+  position: relative; /* ثابت في البداية */
   z-index: 10;
 }
 
 #no {
   background: #555;
   color: white;
-  position: absolute;
+  position: absolute; /* حر الحركة */
   z-index: 5;
 }
 
@@ -53,6 +62,25 @@ button {
   width: 90%;
   max-width: 420px;
   margin-bottom: 20px;
+  z-index: 2;
+}
+
+/* تنسيق شاشة الذكريات */
+#memories-container {
+    display: none; /* مخفي في البداية */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,#ff4d6d,#ff9aa2);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    z-index: 100;
 }
 
 .slideshow-img {
@@ -69,19 +97,26 @@ button {
 
 <body>
 
-<div class="box">
+<div class="box" id="mainBox">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
   <img src="first.jpg" class="main-img">
 
-  <p id="no-counter" style="font-size:18px; color:#333;">
+  <p id="no-counter" style="font-size:18px; color:#333; z-index:2;">
     Number of NO attempts: 0 😈
   </p>
 
-  <button id="yes">Yes 💘</button>
-  <button id="no">No 💔</button>
+  <div style="margin-top: 20px;">
+      <button id="yes">Yes 💘</button>
+      <button id="no">No 💔</button>
+  </div>
 </div>
 
-<!-- الأصوات -->
+<div id="memories-container">
+    <h1>💕 Our Memories 💕</h1>
+    <p style="font-size:20px;">I knew it from the start 💘</p>
+    <img id="slideshow" src="img1.jpg" class="slideshow-img">
+</div>
+
 <audio id="escapeSound" src="NOPE.mp3"></audio>
 <audio id="song" src="song.mp3" loop></audio>
 
@@ -91,16 +126,18 @@ const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
 const counter = document.getElementById("no-counter");
+const mainBox = document.getElementById("mainBox");
+const memoriesContainer = document.getElementById("memories-container");
 
 let noCount = 0;
 let audioUnlocked = false;
 let swapped = false;
 
-/* 🔓 فتح إذن الصوت */
+/* 🔓 فتح إذن الصوت (مهم للمتصفحات) */
 function unlockAudio() {
   if (audioUnlocked) return;
   audioUnlocked = true;
-
+  // تشغيل صامت سريع لتفعيل المحرك الصوتي
   escapeSound.play().then(() => {
     escapeSound.pause();
     escapeSound.currentTime = 0;
@@ -113,91 +150,86 @@ function unlockAudio() {
 }
 
 document.body.addEventListener("click", unlockAudio, { once: true });
+document.body.addEventListener("touchstart", unlockAudio, { once: true });
 
 /* حركة زر NO */
 function moveNo() {
   unlockAudio();
 
-  const padding = 20;
-  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
-  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
+  // الحصول على أبعاد الشاشة لتجنب خروج الزر
+  const maxWidth = window.innerWidth - noBtn.offsetWidth - 20;
+  const maxHeight = window.innerHeight - noBtn.offsetHeight - 20;
 
-  noBtn.style.left = Math.max(padding, x) + "px";
-  noBtn.style.top  = Math.max(padding, y) + "px";
+  const randomX = Math.max(20, Math.random() * maxWidth);
+  const randomY = Math.max(20, Math.random() * maxHeight);
 
+  // تحريك زر NO
+  noBtn.style.left = randomX + "px";
+  noBtn.style.top  = randomY + "px";
+
+  // تشغيل صوت الهروب
   escapeSound.currentTime = 0;
   escapeSound.play().catch(()=>{});
 
   noCount++;
   counter.textContent = `Number of NO attempts: ${noCount} 😈`;
 
-  /* 🔁 بعد 7 مرات YES و NO يتبدلوا */
+  /* 🔁 بعد 7 مرات: تبديل الأماكن */
   if (noCount >= 7 && !swapped) {
     swapped = true;
-
-    const yesRect = yesBtn.getBoundingClientRect();
-    const noRect  = noBtn.getBoundingClientRect();
-
+    
+    // نجعل زر YES حر الحركة (absolute)
     yesBtn.style.position = "absolute";
-    noBtn.style.position  = "relative";
-
-    yesBtn.style.left = noRect.left + "px";
-    yesBtn.style.top  = noRect.top  + "px";
-
-    noBtn.style.left = yesRect.left + "px";
-    noBtn.style.top  = yesRect.top  + "px";
+    
+    // نضع زر YES في المكان الذي كان فيه زر NO (أو قريباً منه)
+    yesBtn.style.left = noBtn.style.left;
+    yesBtn.style.top = noBtn.style.top;
+    
+    // نقوم بنقل زر NO لمكان آخر بعيد حتى لا يضغط عليه بالخطأ
+    const newNoX = Math.max(20, Math.random() * maxWidth);
+    const newNoY = Math.max(20, Math.random() * maxHeight);
+    noBtn.style.left = newNoX + "px";
+    noBtn.style.top = newNoY + "px";
   }
 }
 
+// تفعيل الهروب عند الاقتراب بالماوس أو اللمس
 noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault();
+  e.preventDefault(); // منع الضغط الفعلي
   moveNo();
 });
 
-/* YES */
+/* YES CLICK */
 yesBtn.addEventListener("click", () => {
   unlockAudio();
 
-  /* 🔊 صوت أول ما ندوس YES */
+  /* 1. تشغيل الأغنية */
   song.currentTime = 0;
-  song.play().catch(()=>{});
+  song.play().catch((e) => console.log("Audio play error:", e));
 
+  /* 2. تأثير الكونفيتي */
   confetti({
     particleCount: 180,
     spread: 100,
     origin: { y: 0.6 }
   });
 
-  document.body.innerHTML = `
-    <div style="
-      width:100%;
-      height:100%;
-      background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      color:white;
-      font-family:Arial;
-      text-align:center;
-    ">
-      <h1>💕 Our Memories 💕</h1>
-      <p style="font-size:20px;">I knew it from the start 💘</p>
-      <img id="slideshow" src="img1.jpg" class="slideshow-img">
-    </div>
-  `;
+  /* 3. إخفاء الشاشة الأولى وإظهار الثانية (بدون مسح الـ Body) */
+  mainBox.style.display = "none"; // إخفاء الصندوق القديم
+  memoriesContainer.style.display = "flex"; // إظهار الصندوق الجديد
 
+  /* 4. تشغيل السلايد شو */
   const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
   let index = 0;
-  const img = document.getElementById("slideshow");
+  const imgElement = document.getElementById("slideshow");
 
   setInterval(() => {
-    img.style.opacity = 0;
+    imgElement.style.opacity = 0;
     setTimeout(() => {
       index = (index + 1) % images.length;
-      img.src = images[index];
-      img.style.opacity = 1;
+      imgElement.src = images[index];
+      imgElement.style.opacity = 1;
     }, 500);
   }, 2500);
 });
