@@ -19,7 +19,7 @@ body {
 }
 
 .screen {
-  display: none; /* إخفاء كل الشاشات في البداية */
+  display: none; 
   text-align: center;
   width: 100%;
   height: 100%;
@@ -53,11 +53,10 @@ button {
 .choice-btn:hover { background: #ff4d6d; color: white; transform: scale(1.05); }
 
 /* شاشة الذكريات (Memories) */
-#memories-screen { background: linear-gradient(135deg, #ff9aa2, #ffb7b2); }
 .heart {
   font-size: 80px;
   color: #ff4d6d;
-  animation: beat 0.8s infinite alternate; /* قلب ينبض مع الموسيقى */
+  animation: beat 0.8s infinite alternate;
   margin-top: 20px;
 }
 @keyframes beat { from { transform: scale(1); } to { transform: scale(1.3); } }
@@ -70,11 +69,16 @@ button {
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(255,255,255,0.2);
   opacity: 0;
-  transition: opacity 1.5s ease-in-out; /* تأثير الـ Fade */
+  transition: opacity 1.5s ease-in-out;
 }
 
 /* الصور العامة */
-.main-img, .slideshow-img { width: 90%; max-width: 400px; border-radius: 16px; margin-bottom: 20px; }
+.main-img, .slideshow-img, .yes-img { 
+  width: 90%; 
+  max-width: 400px; 
+  border-radius: 16px; 
+  margin-bottom: 20px; 
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -93,7 +97,7 @@ button {
 </div>
 
 <div id="choice-screen" class="screen">
-  <h1>🎁 Choose your surprise 🎁</h1>
+  <img src="yes.jpg" class="yes-img"> <h1 style="color: #ff4d6d;">Yeey you made it! 🥳✨</h1> <h3>🎁 Choose your surprise 🎁</h3>
   <button class="choice-btn" onclick="startMemories()">Memories 🎵</button>
   <button class="choice-btn" onclick="startBirthday()">Birthday Surprise 🎂</button>
 </div>
@@ -117,7 +121,6 @@ button {
 <audio id="song3" src="song3.mp3" loop></audio>
 
 <script>
-// تعريف العناصر
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const song1 = document.getElementById("song1");
@@ -127,6 +130,14 @@ const escapeSound = document.getElementById("escapeSound");
 
 let noCount = 0;
 let swapped = false;
+
+// إيقاف كل الأغاني
+function stopAllSongs() {
+  [song1, song2, song3].forEach(s => {
+    s.pause();
+    s.currentTime = 0;
+  });
+}
 
 // وظيفة حركة زر NO
 function moveNo() {
@@ -153,21 +164,21 @@ noBtn.addEventListener("mouseenter", moveNo);
 
 // عند الضغط على YES
 yesBtn.addEventListener("click", () => {
-  confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  stopAllSongs();
+  song1.play().catch(()=>{}); // تشتغل song1 في شاشة الاختيار
   showScreen("choice-screen");
-  song1.play().catch(()=>{}); // تشغيل الأغنية الأولى عند الاختيار
+  confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 });
 
-// وظيفة التنقل بين الشاشات
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   document.getElementById(screenId).style.display = 'flex';
 }
 
-// مفاجأة الذكريات (Memories)
+// مفاجأة الذكريات
 function startMemories() {
-  song1.pause();
-  song3.play().catch(()=>{});
+  stopAllSongs();
+  song3.play().catch(()=>{}); // تشتغل song2 هنا
   showScreen("memories-screen");
   
   const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
@@ -178,85 +189,29 @@ function startMemories() {
   }, 2500);
 }
 
-// مفاجأة عيد الميلاد (Birthday Surprise)
+// مفاجأة عيد الميلاد
 function startBirthday() {
-  song1.pause();
+  stopAllSongs();
+  song2.play().catch(()=>{}); // تشتغل song3 هنا
   showScreen("birthday-screen");
   
-  // 1. الأغنية تبدأ
-  song2.play().catch(()=>{});
-
   const photo = document.getElementById("bday-photo");
   const title = document.getElementById("bday-title");
   const msg = document.getElementById("bday-msg");
 
-  // 2. ظهور الصورة وهي صغيرة (img5)
   setTimeout(() => {
     photo.style.opacity = "1";
     title.style.opacity = "1";
   }, 500);
 
-  // 3 & 4. تأثير Fade والتحول للصورة الكبيرة (img6)
   setTimeout(() => {
-    photo.style.opacity = "0"; // Fade out
+    photo.style.opacity = "0"; 
     setTimeout(() => {
-      photo.src = "img6.jpg"; // تغيير الصورة
-      photo.style.opacity = "1"; // Fade in
+      photo.src = "img6.jpg"; 
+      photo.style.opacity = "1"; 
     }, 1500);
   }, 4000);
-// وظيفة لإيقاف كل الأغاني قبل تشغيل واحدة جديدة
-function stopAllSongs() {
-  [song1, song2, song3].forEach(s => {
-    s.pause();
-    s.currentTime = 0;
-  });
-}
 
-// 1. عند الضغط على YES (تبدأ song1)
-yesBtn.addEventListener("click", () => {
-  stopAllSongs(); // نوقف أي صوت شغال احتياطياً
-  song1.play().catch(()=>{}); 
-  showScreen("choice-screen");
-  confetti({ particleCount: 150, spread: 70 });
-});
-
-// 2. عند اختيار Memories (تتوقف song1 وتبدأ song2)
-function startMemories() {
-  stopAllSongs();
-  song3.play().catch(()=>{});
-  showScreen("memories-screen");
-  
-  // تشغيل السلايد شو
-  const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
-  let i = 0;
-  setInterval(() => {
-    i = (i + 1) % images.length;
-    document.getElementById("slideshow").src = images[i];
-  }, 2500);
-}
-
-// 3. عند اختيار Birthday Surprise (تتوقف song1 وتبدأ song3)
-function startBirthday() {
-  stopAllSongs();
-  song2.play().catch(()=>{});
-  showScreen("birthday-screen");
-  
-  // تسلسل ظهور الصور
-  setTimeout(() => {
-    document.getElementById("bday-photo").style.opacity = "1";
-    document.getElementById("bday-title").style.opacity = "1";
-  }, 500);
-
-  setTimeout(() => {
-    const photo = document.getElementById("bday-photo");
-    photo.style.opacity = "0";
-    setTimeout(() => {
-      photo.src = "img6.jpg";
-      photo.style.opacity = "1";
-    }, 1500);
-  }, 4000);
-}
-  // 5. رسالة عيد الميلاد
   setTimeout(() => {
     msg.textContent = "كل سنة وأنتي أجمل آية في الدنيا 🎂💖";
     confetti({ particleCount: 100, spread: 70 });
