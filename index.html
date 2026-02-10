@@ -94,7 +94,7 @@ button {
 
 <div id="choice-screen" class="screen">
   <h1>🎁 Choose your surprise 🎁</h1>
-  <button class="choice-btn" onclick="startMemories()">Memories 🎵</button>
+  <button class="choice-btn" onclick="startMemories()">Valentine Girl 💖</button>
   <button class="choice-btn" onclick="startBirthday()">Birthday Surprise 🎂</button>
 </div>
 
@@ -155,7 +155,7 @@ noBtn.addEventListener("mouseenter", moveNo);
 yesBtn.addEventListener("click", () => {
   confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
   showScreen("choice-screen");
-  song1.play().catch(()=>{}); // تشغيل الأغنية الأولى عند الاختيار
+  song2.play().catch(()=>{}); // تشغيل الأغنية الأولى عند الاختيار
 });
 
 // وظيفة التنقل بين الشاشات
@@ -166,8 +166,8 @@ function showScreen(screenId) {
 
 // مفاجأة الذكريات (Memories)
 function startMemories() {
-  song1.pause();
-  song2.play().catch(()=>{});
+  song2.pause();
+  song.play().catch(()=>{});
   showScreen("memories-screen");
   
   const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
@@ -180,11 +180,11 @@ function startMemories() {
 
 // مفاجأة عيد الميلاد (Birthday Surprise)
 function startBirthday() {
-  song1.pause();
+  song2.pause();
   showScreen("birthday-screen");
   
   // 1. الأغنية تبدأ
-  song3.play().catch(()=>{});
+  song1.play().catch(()=>{});
 
   const photo = document.getElementById("bday-photo");
   const title = document.getElementById("bday-title");
