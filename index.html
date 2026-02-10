@@ -223,7 +223,7 @@ yesBtn.addEventListener("click", () => {
 // 2. عند اختيار Memories (تتوقف song1 وتبدأ song2)
 function startMemories() {
   stopAllSongs();
-  song2.play().catch(()=>{});
+  song3.play().catch(()=>{});
   showScreen("memories-screen");
   
   // تشغيل السلايد شو
@@ -238,7 +238,7 @@ function startMemories() {
 // 3. عند اختيار Birthday Surprise (تتوقف song1 وتبدأ song3)
 function startBirthday() {
   stopAllSongs();
-  song3.play().catch(()=>{});
+  song2.play().catch(()=>{});
   showScreen("birthday-screen");
   
   // تسلسل ظهور الصور
