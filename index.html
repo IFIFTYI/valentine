@@ -5,30 +5,6 @@
 <title>Valentine 💘</title>
 
 <style>
-.yes-img {
-  width: 120%;
-  max-width: 450px;
-  height: auto;
-  margin: 20px 0;
-}
-
-.main-img {
-  width: 120%;
-  max-width: 420px;
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.main-img,
-.yes-img {
-  transition: transform 0.3s ease;
-}
-
-.main-img:hover,
-.yes-img:hover {
-  transform: scale(1.05);
-}
-
 body {
   margin: 0;
   height: 100vh;
@@ -68,6 +44,29 @@ button {
   color: white;
   position: absolute;
 }
+
+.main-img {
+  width: 90%;
+  max-width: 420px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.yes-img {
+  width: 90%;
+  max-width: 450px;
+  height: auto;
+  margin: 20px 0;
+}
+
+.slideshow-img {
+  width: 90%;
+  max-width: 450px;
+  height: auto;
+  margin: 20px 0;
+  border-radius: 16px;
+  transition: opacity 0.5s ease;
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -76,9 +75,9 @@ button {
 <body>
 
 <div class="box">
-  <h1>💖 Will you be my Valentine ayacita? 💖</h1>
+  <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
 
-  <img src="first.jpg" class="main-img"><br><br>
+  <img src="first.jpg" class="main-img">
 
   <p id="no-counter" style="font-size:18px; color:#333;">
     Number of NO attempts: 0 😈
@@ -88,12 +87,15 @@ button {
   <button id="no">No 💔</button>
 </div>
 
+<!-- أصوات -->
 <audio id="escapeSound" src="NOPE.mp3"></audio>
+<audio id="song" src="song.mp3" loop></audio>
 
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const sound = document.getElementById("escapeSound");
+const song = document.getElementById("song");
 
 let noCount = 0;
 
@@ -105,8 +107,8 @@ document.body.addEventListener("click", () => {
   }).catch(()=>{});
 }, { once: true });
 
-// حركة NO + الصوت + العداد + تكبير YES
-function moveButton() {
+// حركة NO
+function moveNo() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
@@ -124,19 +126,20 @@ function moveButton() {
   yesBtn.style.fontSize = (currentSize + 2) + "px";
 }
 
-// PC
-noBtn.addEventListener("mouseenter", moveButton);
-
-// Mobile
-noBtn.addEventListener("touchstart", function(e) {
+// PC + Mobile
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  moveButton();
+  moveNo();
 });
 
 // YES action 💘
 yesBtn.addEventListener("click", () => {
 
   alert("💖 I knew you would say YES, Ayacita 💖");
+
+  song.currentTime = 0;
+  song.play().catch(()=>{});
 
   confetti({
     particleCount: 180,
@@ -157,11 +160,23 @@ yesBtn.addEventListener("click", () => {
       font-family:Arial;
       text-align:center;
     ">
-      <h1>💕 Yay! I knew it! 💕</h1>
-      <img src="yes.jpg" class="yes-img">
-      <p style="font-size:22px;">Happy Valentine 💘</p>
+      <h1>💕 Our Memories 💕</h1>
+      <img id="slideshow" src="img1.jpg" class="slideshow-img">
     </div>
   `;
+
+  const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
+  let index = 0;
+  const img = document.getElementById("slideshow");
+
+  setInterval(() => {
+    img.style.opacity = 0;
+    setTimeout(() => {
+      index = (index + 1) % images.length;
+      img.src = images[index];
+      img.style.opacity = 1;
+    }, 500);
+  }, 2500);
 });
 </script>
 
