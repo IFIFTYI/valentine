@@ -204,7 +204,58 @@ function startBirthday() {
       photo.style.opacity = "1"; // Fade in
     }, 1500);
   }, 4000);
+// وظيفة لإيقاف كل الأغاني قبل تشغيل واحدة جديدة
+function stopAllSongs() {
+  [song1, song2, song3].forEach(s => {
+    s.pause();
+    s.currentTime = 0;
+  });
+}
 
+// 1. عند الضغط على YES (تبدأ song1)
+yesBtn.addEventListener("click", () => {
+  stopAllSongs(); // نوقف أي صوت شغال احتياطياً
+  song1.play().catch(()=>{}); 
+  showScreen("choice-screen");
+  confetti({ particleCount: 150, spread: 70 });
+});
+
+// 2. عند اختيار Memories (تتوقف song1 وتبدأ song2)
+function startMemories() {
+  stopAllSongs();
+  song2.play().catch(()=>{});
+  showScreen("memories-screen");
+  
+  // تشغيل السلايد شو
+  const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % images.length;
+    document.getElementById("slideshow").src = images[i];
+  }, 2500);
+}
+
+// 3. عند اختيار Birthday Surprise (تتوقف song1 وتبدأ song3)
+function startBirthday() {
+  stopAllSongs();
+  song3.play().catch(()=>{});
+  showScreen("birthday-screen");
+  
+  // تسلسل ظهور الصور
+  setTimeout(() => {
+    document.getElementById("bday-photo").style.opacity = "1";
+    document.getElementById("bday-title").style.opacity = "1";
+  }, 500);
+
+  setTimeout(() => {
+    const photo = document.getElementById("bday-photo");
+    photo.style.opacity = "0";
+    setTimeout(() => {
+      photo.src = "img6.jpg";
+      photo.style.opacity = "1";
+    }, 1500);
+  }, 4000);
+}
   // 5. رسالة عيد الميلاد
   setTimeout(() => {
     msg.textContent = "كل سنة وأنتي أجمل آية في الدنيا 🎂💖";
