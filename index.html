@@ -52,13 +52,6 @@ button {
   margin-bottom: 20px;
 }
 
-.yes-img {
-  width: 90%;
-  max-width: 450px;
-  height: auto;
-  margin: 20px 0;
-}
-
 .slideshow-img {
   width: 90%;
   max-width: 450px;
@@ -76,7 +69,6 @@ button {
 
 <div class="box">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
-
   <img src="first.jpg" class="main-img">
 
   <p id="no-counter" style="font-size:18px; color:#333;">
@@ -87,7 +79,7 @@ button {
   <button id="no">No 💔</button>
 </div>
 
-<!-- أصوات -->
+<!-- الأصوات -->
 <audio id="escapeSound" src="NOPE.mp3"></audio>
 <audio id="song" src="song.mp3" loop></audio>
 
@@ -99,7 +91,7 @@ const song = document.getElementById("song");
 
 let noCount = 0;
 
-// فتح إذن الصوت (مهم للموبايل)
+/* 🔑 فتح إذن الصوت (أهم سطر في المشروع كله) */
 document.body.addEventListener("click", () => {
   sound.play().then(() => {
     sound.pause();
@@ -107,7 +99,6 @@ document.body.addEventListener("click", () => {
   }).catch(()=>{});
 }, { once: true });
 
-// حركة NO
 function moveNo() {
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
@@ -126,17 +117,14 @@ function moveNo() {
   yesBtn.style.fontSize = (currentSize + 2) + "px";
 }
 
-// PC + Mobile
 noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
   moveNo();
 });
 
-// YES action 💘
+/* ⭐ YES — شغّل الأغنية أول حاجة */
 yesBtn.addEventListener("click", () => {
-
-  alert("💖 I knew you would say YES, Ayacita 💖");
 
   song.currentTime = 0;
   song.play().catch(()=>{});
@@ -160,7 +148,8 @@ yesBtn.addEventListener("click", () => {
       font-family:Arial;
       text-align:center;
     ">
-      <h1>💕 Our Memories 💕</h1>
+      <h1>💕 Memories 💕</h1>
+      <p style="font-size:20px;">I knew it from the start 💘</p>
       <img id="slideshow" src="img1.jpg" class="slideshow-img">
     </div>
   `;
