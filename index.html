@@ -117,20 +117,21 @@ button {
 </div>
 
 <div id="choice-screen" class="screen">
-  <img src="yes.jpg" class="yes-img"> <h1 style="color: #ff4d6d;">Yeey you made it! 🥳✨</h1> <h3>🎁 Choose your surprise 🎁</h3>
-  <button class="choice-btn" onclick="startMemories()">Memories 🎵</button>
-  <button class="choice-btn" onclick="startBirthday()">Birthday Surprise 🎂</button>
+  <img src="yes.jpg" class="yes-img"> <h1 style="color: #ff4d6d;">yeey you made it اجمل واحده كدة كدة 🥳✨</h1> <h3>🎁 تقدري تختاري حاجه واحده بس من دول🎁</h3>
+  <button class="choice-btn" onclick="startMemories()">Valentine girl 🎵</button>
+  <button class="choice-btn" onclick="startBirthday()">Birthday girl 🎂</button>
 </div>
 
 <div id="memories-screen" class="screen">
-  <h1>💕 Our Memories 💕</h1>
+  <h1>💕 Like I always say, everything is better in your eyes 💕</h1>
   <img id="slideshow" src="img1.jpg" class="slideshow-img">
   <div class="heart">❤️</div>
-  <p>I knew it from the start 💘</p>
+  <p>Not pictures. Proof 💘</p>
 </div>
 
 <div id="birthday-screen" class="screen">
-  <h1 id="bday-title" style="opacity:0;">Happy Birthday! 🎈</h1>
+  <h1 id="bday-title" style="opacity:0;">Creativity taught me how to recognize value.
+This beauty doesn’t follow the rules </h1>
   <img id="bday-photo" src="img5.jpg" class="bday-img">
   <p id="bday-msg" style="margin-top:20px; font-size:24px; font-weight:bold;"></p>
 </div>
@@ -233,7 +234,15 @@ function startBirthday() {
   }, 4000);
 
   setTimeout(() => {
-    msg.textContent = "كل سنة وأنتي أجمل آية في الدنيا 🎂💖";
+    msg.textContent = "Another year for Ayacita. 
+      Someone defined by presence, 
+      not noise. Creative, 
+      intentional, 
+      and impossible to overlook. 
+      Time didn’t add to her. 
+      It revealed her. 
+      Today deserves more than a wish. 
+      It deserves recognition. 🎂💖";
     confetti({ particleCount: 100, spread: 70 });
   }, 7000);
 }
