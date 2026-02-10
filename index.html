@@ -16,94 +16,191 @@ body {
   overflow: hidden;
 }
 
-/* container كبير لكن مش بياخد clicks */
-#app {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
-}
-
 .box {
   text-align: center;
-  position: relative;
-  pointer-events: auto; /* 🔴 مهم */
 }
 
 h1 {
-  font-size: 36px;
-  margin-bottom: 15px;
+  font-size: 42px;
+  margin-bottom: 20px;
 }
 
 button {
-  font-size: 18px;
-  padding: 14px 28px;
+  font-size: 20px;
+  padding: 15px 30px;
   border-radius: 12px;
   border: none;
   cursor: pointer;
-  pointer-events: auto;
 }
 
 #yes {
   background: #ff4d6d;
   color: white;
-  margin-right: 15px;
-  position: relative;
-  z-index: 10;
+  margin-right: 20px;
 }
 
 #no {
   background: #555;
   color: white;
   position: absolute;
-  z-index: 9;
+}
+
+.main-img {
+  width: 90%;
+  max-width: 420px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.slideshow-img {
+  width: 90%;
+  max-width: 450px;
+  height: auto;
+  margin: 20px 0;
+  border-radius: 16px;
+  transition: opacity 0.5s ease;
 }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
-<body>
+<<body>
 
 <div id="app">
   <div class="box">
-    <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
-
-    <p id="counter">NO attempts: 0 😈</p>
-
-    <button id="yes">Yes 💘</button>
-    <button id="no">No 💔</button>
-  </div>
 </div>
+</div>
+  <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
+  <img src="first.jpg" class="main-img">
+
+  <p id="no-counter" style="font-size:18px; color:#333;">
+    Number of NO attempts: 0 😈
+  </p>
+
+  <button id="play-music" style="
+  margin-top:15px;
+  background:#fff;
+  color:#ff4d6d;
+  font-size:16px;
+  padding:10px 20px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+">
+  ▶ Play Memories Music
+</button>
+
+  <button id="no">No 💔</button>
+</div>
+
+<!-- الأصوات -->
+<audio id="escapeSound" src="NOPE.mp3"></audio>
+<audio id="song" src="song.mp3" loop></audio>
 
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
-const counter = document.getElementById("counter");
+const escapeSound = document.getElementById("escapeSound");
+const song = document.getElementById("song");
+const playMusicBtn = document.getElementById("play-music");
+playMusicBtn.addEventListener("click", () => {
 
+  playMusicBtn.style.display = "none";
+});
 let noCount = 0;
+let audioUnlocked = false;
+
+/* 🔓 فتح إذن الصوت مرة واحدة */
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  escapeSound.play().then(() => {
+    escapeSound.pause();
+    escapeSound.currentTime = 0;
+  }).catch(()=>{});
+
+  song.play().then(() => {
+    song.pause();
+    song.currentTime = 0;
+  }).catch(()=>{});
+}
+
+document.body.addEventListener("click", unlockAudio, { once: true });
 
 /* حركة زر NO */
 function moveNo() {
+  unlockAudio();
+
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
 
+  escapeSound.currentTime = 0;
+  escapeSound.play().catch(()=>{});
+
   noCount++;
-  counter.textContent = `NO attempts: ${noCount} 😈`;
+  document.getElementById("no-counter").innerText =
+    `Number of NO attempts: ${noCount} 😈`;
+
+  const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+  yesBtn.style.fontSize = (currentSize + 2) + "px";
 }
 
-/* الأحداث */
 noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
   moveNo();
 });
 
+/* YES */
 yesBtn.addEventListener("click", () => {
-  alert("YES CLICKED 💖");
+  unlockAudio();
+
+  song.currentTime = 0;
+  song.play().catch(()=>{});
+
+  confetti({
+    particleCount: 180,
+    spread: 100,
+    origin: { y: 0.6 }
+  });
+
+document.getElementById("app").innerHTML = `
+  <div style="
+    width:100%;
+    height:100%;
+    background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+  ">
+    <h1>💕 Our Memories 💕</h1>
+    <p style="font-size:20px;">I knew it from the start 💘</p>
+    <img id="slideshow" src="img1.jpg" class="slideshow-img">
+  </div>
+`;
+
+
+  const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
+  let index = 0;
+  const img = document.getElementById("slideshow");
+
+  setInterval(() => {
+    img.style.opacity = 0;
+    setTimeout(() => {
+      index = (index + 1) % images.length;
+      img.src = images[index];
+      img.style.opacity = 1;
+    }, 500);
+  }, 2500);
 });
 </script>
 
