@@ -86,28 +86,42 @@ button {
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
-const sound = document.getElementById("escapeSound");
+const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
 
 let noCount = 0;
+let audioUnlocked = false;
 
-/* 🔑 فتح إذن الصوت (أهم سطر في المشروع كله) */
-document.body.addEventListener("click", () => {
-  sound.play().then(() => {
-    sound.pause();
-    sound.currentTime = 0;
+/* 🔓 فتح إذن الصوت مرة واحدة */
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  escapeSound.play().then(() => {
+    escapeSound.pause();
+    escapeSound.currentTime = 0;
   }).catch(()=>{});
-}, { once: true });
 
+  song.play().then(() => {
+    song.pause();
+    song.currentTime = 0;
+  }).catch(()=>{});
+}
+
+document.body.addEventListener("click", unlockAudio, { once: true });
+
+/* حركة زر NO */
 function moveNo() {
+  unlockAudio();
+
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
 
-  sound.currentTime = 0;
-  sound.play().catch(()=>{});
+  escapeSound.currentTime = 0;
+  escapeSound.play().catch(()=>{});
 
   noCount++;
   document.getElementById("no-counter").innerText =
@@ -123,8 +137,9 @@ noBtn.addEventListener("touchstart", (e) => {
   moveNo();
 });
 
-/* ⭐ YES — شغّل الأغنية أول حاجة */
+/* YES */
 yesBtn.addEventListener("click", () => {
+  unlockAudio();
 
   song.currentTime = 0;
   song.play().catch(()=>{});
@@ -148,7 +163,7 @@ yesBtn.addEventListener("click", () => {
       font-family:Arial;
       text-align:center;
     ">
-      <h1>💕 Memories 💕</h1>
+      <h1>💕 Our Memories 💕</h1>
       <p style="font-size:20px;">I knew it from the start 💘</p>
       <img id="slideshow" src="img1.jpg" class="slideshow-img">
     </div>
