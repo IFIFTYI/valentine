@@ -167,7 +167,7 @@ function showScreen(screenId) {
 // مفاجأة الذكريات (Memories)
 function startMemories() {
   song1.pause();
-  song2.play().catch(()=>{});
+  song3.play().catch(()=>{});
   showScreen("memories-screen");
   
   const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
@@ -184,7 +184,7 @@ function startBirthday() {
   showScreen("birthday-screen");
   
   // 1. الأغنية تبدأ
-  song3.play().catch(()=>{});
+  song2.play().catch(()=>{});
 
   const photo = document.getElementById("bday-photo");
   const title = document.getElementById("bday-title");
