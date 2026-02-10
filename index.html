@@ -77,6 +77,19 @@ button {
   </p>
 
   <button id="yes">Yes 💘</button>
+    <button id="play-music" style="
+  margin-top:15px;
+  background:#fff;
+  color:#ff4d6d;
+  font-size:16px;
+  padding:10px 20px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+">
+  ▶ Play Memories Music
+</button>
+
   <button id="no">No 💔</button>
 </div>
 </div>
@@ -90,6 +103,12 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
+  const playMusicBtn = document.getElementById("play-music");
+playMusicBtn.addEventListener("click", () => {
+  song.currentTime = 0;
+  song.play().catch(()=>{});
+  playMusicBtn.style.display = "none";
+});
 
 let noCount = 0;
 let audioUnlocked = false;
