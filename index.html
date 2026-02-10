@@ -65,12 +65,9 @@ button {
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
-<<body>
+<body>
 
-<div id="app">
-  <div class="box">
-</div>
-</div>
+<div class="box">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
   <img src="first.jpg" class="main-img">
 
@@ -78,19 +75,7 @@ button {
     Number of NO attempts: 0 😈
   </p>
 
-  <button id="play-music" style="
-  margin-top:15px;
-  background:#fff;
-  color:#ff4d6d;
-  font-size:16px;
-  padding:10px 20px;
-  border-radius:20px;
-  border:none;
-  cursor:pointer;
-">
-  ▶ Play Memories Music
-</button>
-
+  <button id="yes">Yes 💘</button>
   <button id="no">No 💔</button>
 </div>
 
@@ -103,10 +88,7 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
-const playMusicBtn = document.getElementById("play-music");
-playMusicBtn.addEventListener("click", () => {
 
-});
 let noCount = 0;
 let audioUnlocked = false;
 
@@ -168,25 +150,24 @@ yesBtn.addEventListener("click", () => {
     origin: { y: 0.6 }
   });
 
-document.getElementById("app").innerHTML = `
-  <div style="
-    width:100%;
-    height:100%;
-    background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    color:white;
-    font-family:Arial;
-    text-align:center;
-  ">
-    <h1>💕 Our Memories 💕</h1>
-    <p style="font-size:20px;">I knew it from the start 💘</p>
-    <img id="slideshow" src="img1.jpg" class="slideshow-img">
-  </div>
-`;
-
+  document.body.innerHTML = `
+    <div style="
+      width:100%;
+      height:100%;
+      background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+    ">
+      <h1>💕 Our Memories 💕</h1>
+      <p style="font-size:20px;">I knew it from the start 💘</p>
+      <img id="slideshow" src="img1.jpg" class="slideshow-img">
+    </div>
+  `;
 
   const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
   let index = 0;
