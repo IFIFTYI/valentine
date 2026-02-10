@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Valentine 💘</title>
+<title>Valentine & Birthday Surprise 💘</title>
 
 <style>
+/* التنسيق العام */
 body {
   margin: 0;
   height: 100vh;
@@ -12,84 +13,68 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   overflow: hidden;
+  color: #333;
 }
 
-.box {
+.screen {
+  display: none; /* إخفاء كل الشاشات في البداية */
   text-align: center;
-  position: relative;
-  /* نحتاج هذا لضمان أن العناصر داخله تتحرك بالنسبة له أو للشاشة */
-  width: 100%; 
+  width: 100%;
   height: 100%;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-h1 {
-  font-size: 42px;
-  margin-bottom: 20px;
-  z-index: 2;
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* شاشة البداية */
+#start-screen { display: flex; }
+
+/* الأزرار */
 button {
   font-size: 20px;
   padding: 15px 30px;
   border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s;
+  margin: 10px;
+  transition: transform 0.2s, background 0.3s;
 }
 
-#yes {
-  background: #ff4d6d;
-  color: white;
-  margin-right: 20px;
-  position: relative; /* ثابت في البداية */
-  z-index: 10;
+#yes { background: #ff4d6d; color: white; position: relative; z-index: 10; }
+#no { background: #555; color: white; position: absolute; z-index: 5; }
+
+.choice-btn { background: #fff; color: #ff4d6d; font-weight: bold; border: 2px solid #ff4d6d; width: 250px; }
+.choice-btn:hover { background: #ff4d6d; color: white; transform: scale(1.05); }
+
+/* شاشة الذكريات (Memories) */
+#memories-screen { background: linear-gradient(135deg, #ff9aa2, #ffb7b2); }
+.heart {
+  font-size: 80px;
+  color: #ff4d6d;
+  animation: beat 0.8s infinite alternate; /* قلب ينبض مع الموسيقى */
+  margin-top: 20px;
+}
+@keyframes beat { from { transform: scale(1); } to { transform: scale(1.3); } }
+
+/* شاشة عيد الميلاد (Birthday) */
+#birthday-screen { background: #000; color: white; }
+.bday-img {
+  width: 80%;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out; /* تأثير الـ Fade */
 }
 
-#no {
-  background: #555;
-  color: white;
-  position: absolute; /* حر الحركة */
-  z-index: 5;
-}
-
-.main-img {
-  width: 90%;
-  max-width: 420px;
-  margin-bottom: 20px;
-  z-index: 2;
-}
-
-/* تنسيق شاشة الذكريات */
-#memories-container {
-    display: none; /* مخفي في البداية */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg,#ff4d6d,#ff9aa2);
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-    z-index: 100;
-}
-
-.slideshow-img {
-  width: 90%;
-  max-width: 450px;
-  margin: 20px 0;
-  border-radius: 16px;
-  transition: opacity 0.5s ease;
-}
+/* الصور العامة */
+.main-img, .slideshow-img { width: 90%; max-width: 400px; border-radius: 16px; margin-bottom: 20px; }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -97,142 +82,135 @@ button {
 
 <body>
 
-<div class="box" id="mainBox">
+<div id="start-screen" class="screen">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
   <img src="first.jpg" class="main-img">
-
-  <p id="no-counter" style="font-size:18px; color:#333; z-index:2;">
-    Number of NO attempts: 0 😈
-  </p>
-
-  <div style="margin-top: 20px;">
-      <button id="yes">Yes 💘</button>
-      <button id="no">No 💔</button>
+  <p id="no-counter">Number of NO attempts: 0 😈</p>
+  <div>
+    <button id="yes">Yes 💘</button>
+    <button id="no">No 💔</button>
   </div>
 </div>
 
-<div id="memories-container">
-    <h1>💕 Our Memories 💕</h1>
-    <p style="font-size:20px;">I knew it from the start 💘</p>
-    <img id="slideshow" src="img1.jpg" class="slideshow-img">
+<div id="choice-screen" class="screen">
+  <h1>🎁 Choose your surprise 🎁</h1>
+  <button class="choice-btn" onclick="startMemories()">Memories 🎵</button>
+  <button class="choice-btn" onclick="startBirthday()">Birthday Surprise 🎂</button>
+</div>
+
+<div id="memories-screen" class="screen">
+  <h1>💕 Our Memories 💕</h1>
+  <img id="slideshow" src="img1.jpg" class="slideshow-img">
+  <div class="heart">❤️</div>
+  <p>I knew it from the start 💘</p>
+</div>
+
+<div id="birthday-screen" class="screen">
+  <h1 id="bday-title" style="opacity:0;">Happy Birthday! 🎈</h1>
+  <img id="bday-photo" src="img5.jpg" class="bday-img">
+  <p id="bday-msg" style="margin-top:20px; font-size:24px; font-weight:bold;"></p>
 </div>
 
 <audio id="escapeSound" src="NOPE.mp3"></audio>
-<audio id="song" src="song.mp3" loop></audio>
+<audio id="song1" src="song.mp3" loop></audio>
+<audio id="song2" src="song2.mp3" loop></audio>
+<audio id="song3" src="song3.mp3" loop></audio>
 
 <script>
+// تعريف العناصر
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
+const song1 = document.getElementById("song1");
+const song2 = document.getElementById("song2");
+const song3 = document.getElementById("song3");
 const escapeSound = document.getElementById("escapeSound");
-const song = document.getElementById("song");
-const counter = document.getElementById("no-counter");
-const mainBox = document.getElementById("mainBox");
-const memoriesContainer = document.getElementById("memories-container");
 
 let noCount = 0;
-let audioUnlocked = false;
 let swapped = false;
 
-/* 🔓 فتح إذن الصوت (مهم للمتصفحات) */
-function unlockAudio() {
-  if (audioUnlocked) return;
-  audioUnlocked = true;
-  // تشغيل صامت سريع لتفعيل المحرك الصوتي
-  escapeSound.play().then(() => {
-    escapeSound.pause();
-    escapeSound.currentTime = 0;
-  }).catch(()=>{});
-
-  song.play().then(() => {
-    song.pause();
-    song.currentTime = 0;
-  }).catch(()=>{});
-}
-
-document.body.addEventListener("click", unlockAudio, { once: true });
-document.body.addEventListener("touchstart", unlockAudio, { once: true });
-
-/* حركة زر NO */
+// وظيفة حركة زر NO
 function moveNo() {
-  unlockAudio();
-
-  // الحصول على أبعاد الشاشة لتجنب خروج الزر
-  const maxWidth = window.innerWidth - noBtn.offsetWidth - 20;
-  const maxHeight = window.innerHeight - noBtn.offsetHeight - 20;
-
-  const randomX = Math.max(20, Math.random() * maxWidth);
-  const randomY = Math.max(20, Math.random() * maxHeight);
-
-  // تحريك زر NO
-  noBtn.style.left = randomX + "px";
-  noBtn.style.top  = randomY + "px";
-
-  // تشغيل صوت الهروب
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
+  noBtn.style.left = Math.max(20, x) + "px";
+  noBtn.style.top  = Math.max(20, y) + "px";
+  
   escapeSound.currentTime = 0;
   escapeSound.play().catch(()=>{});
-
+  
   noCount++;
-  counter.textContent = `Number of NO attempts: ${noCount} 😈`;
+  document.getElementById("no-counter").textContent = `Number of NO attempts: ${noCount} 😈`;
 
-  /* 🔁 بعد 7 مرات: تبديل الأماكن */
   if (noCount >= 7 && !swapped) {
     swapped = true;
-    
-    // نجعل زر YES حر الحركة (absolute)
     yesBtn.style.position = "absolute";
-    
-    // نضع زر YES في المكان الذي كان فيه زر NO (أو قريباً منه)
     yesBtn.style.left = noBtn.style.left;
     yesBtn.style.top = noBtn.style.top;
-    
-    // نقوم بنقل زر NO لمكان آخر بعيد حتى لا يضغط عليه بالخطأ
-    const newNoX = Math.max(20, Math.random() * maxWidth);
-    const newNoY = Math.max(20, Math.random() * maxHeight);
-    noBtn.style.left = newNoX + "px";
-    noBtn.style.top = newNoY + "px";
   }
 }
 
-// تفعيل الهروب عند الاقتراب بالماوس أو اللمس
 noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault(); // منع الضغط الفعلي
-  moveNo();
-});
 
-/* YES CLICK */
+// عند الضغط على YES
 yesBtn.addEventListener("click", () => {
-  unlockAudio();
-
-  /* 1. تشغيل الأغنية */
-  song.currentTime = 0;
-  song.play().catch((e) => console.log("Audio play error:", e));
-
-  /* 2. تأثير الكونفيتي */
-  confetti({
-    particleCount: 180,
-    spread: 100,
-    origin: { y: 0.6 }
-  });
-
-  /* 3. إخفاء الشاشة الأولى وإظهار الثانية (بدون مسح الـ Body) */
-  mainBox.style.display = "none"; // إخفاء الصندوق القديم
-  memoriesContainer.style.display = "flex"; // إظهار الصندوق الجديد
-
-  /* 4. تشغيل السلايد شو */
-  const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
-  let index = 0;
-  const imgElement = document.getElementById("slideshow");
-
-  setInterval(() => {
-    imgElement.style.opacity = 0;
-    setTimeout(() => {
-      index = (index + 1) % images.length;
-      imgElement.src = images[index];
-      imgElement.style.opacity = 1;
-    }, 500);
-  }, 2500);
+  confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  showScreen("choice-screen");
+  song1.play().catch(()=>{}); // تشغيل الأغنية الأولى عند الاختيار
 });
+
+// وظيفة التنقل بين الشاشات
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+  document.getElementById(screenId).style.display = 'flex';
+}
+
+// مفاجأة الذكريات (Memories)
+function startMemories() {
+  song1.pause();
+  song2.play().catch(()=>{});
+  showScreen("memories-screen");
+  
+  const images = ["img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg"];
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % images.length;
+    document.getElementById("slideshow").src = images[i];
+  }, 2500);
+}
+
+// مفاجأة عيد الميلاد (Birthday Surprise)
+function startBirthday() {
+  song1.pause();
+  showScreen("birthday-screen");
+  
+  // 1. الأغنية تبدأ
+  song3.play().catch(()=>{});
+
+  const photo = document.getElementById("bday-photo");
+  const title = document.getElementById("bday-title");
+  const msg = document.getElementById("bday-msg");
+
+  // 2. ظهور الصورة وهي صغيرة (img5)
+  setTimeout(() => {
+    photo.style.opacity = "1";
+    title.style.opacity = "1";
+  }, 500);
+
+  // 3 & 4. تأثير Fade والتحول للصورة الكبيرة (img6)
+  setTimeout(() => {
+    photo.style.opacity = "0"; // Fade out
+    setTimeout(() => {
+      photo.src = "img6.jpg"; // تغيير الصورة
+      photo.style.opacity = "1"; // Fade in
+    }, 1500);
+  }, 4000);
+
+  // 5. رسالة عيد الميلاد
+  setTimeout(() => {
+    msg.textContent = "كل سنة وأنتي أجمل آية في الدنيا 🎂💖";
+    confetti({ particleCount: 100, spread: 70 });
+  }, 7000);
+}
 </script>
 
 </body>
