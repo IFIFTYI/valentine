@@ -1,124 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <title>Valentine 💘</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, pink, #ffb6c1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
-
-.box {
-  text-align: center;
-  position: relative;
-  /* نحتاج هذا لضمان أن العناصر داخله تتحرك بالنسبة له أو للشاشة */
-  width: 100%; 
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-h1 {
-  font-size: 42px;
-  margin-bottom: 20px;
-  z-index: 2;
-}
-
-button {
-  font-size: 20px;
-  padding: 15px 30px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-#yes {
-  background: #ff4d6d;
-  color: white;
-  margin-right: 20px;
-  position: relative; /* ثابت في البداية */
-  z-index: 10;
-}
-
-#no {
-  background: #555;
-  color: white;
-  position: absolute; /* حر الحركة */
-  z-index: 5;
-}
-
-.main-img {
-  width: 90%;
-  max-width: 420px;
-  margin-bottom: 20px;
-  z-index: 2;
-}
-
-/* تنسيق شاشة الذكريات */
-#memories-container {
-    display: none; /* مخفي في البداية */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg,#ff4d6d,#ff9aa2);
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-    z-index: 100;
-}
-
-.slideshow-img {
-  width: 90%;
-  max-width: 450px;
-  margin: 20px 0;
-  border-radius: 16px;
-  transition: opacity 0.5s ease;
-}
+  body { margin:0; height:100vh; background:linear-gradient(135deg, pink, #ffb6c1); display:flex; justify-content:center; align-items:center; font-family:Arial, sans-serif; overflow:hidden; }
+  .box { text-align:center; position:relative; }
+  h1 { font-size:42px; margin-bottom:20px; }
+  button { font-size:20px; padding:15px 30px; border-radius:12px; border:none; cursor:pointer; }
+  #yes { background:#ff4d6d; color:white; margin-right:20px; position:relative; z-index:10; }
+  #no { background:#555; color:white; position:absolute; z-index:5; }
+  .main-img { width:90%; max-width:420px; margin-bottom:20px; }
+  .slideshow-img { width:90%; max-width:450px; margin:20px 0; border-radius:16px; transition:opacity .5s ease; }
+  #tapPlay { position:fixed; left:12px; bottom:12px; padding:8px 12px; border-radius:8px; background:#222; color:#fff; display:none; z-index:999; }
 </style>
-
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-
 <body>
 
-<div class="box" id="mainBox">
+<div class="box">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
-  <img src="first.jpg" class="main-img">
+  <img src="first.jpg" class="main-img" alt="main image">
 
-  <p id="no-counter" style="font-size:18px; color:#333; z-index:2;">
-    Number of NO attempts: 0 😈
-  </p>
+  <p id="no-counter" style="font-size:18px; color:#333;">Number of NO attempts: 0 😈</p>
 
-  <div style="margin-top: 20px;">
-      <button id="yes">Yes 💘</button>
-      <button id="no">No 💔</button>
-  </div>
+  <button id="yes">Yes 💘</button>
+  <button id="no">No 💔</button>
 </div>
 
-<div id="memories-container">
-    <h1>💕 Our Memories 💕</h1>
-    <p style="font-size:20px;">I knew it from the start 💘</p>
-    <img id="slideshow" src="img1.jpg" class="slideshow-img">
-</div>
+<button id="tapPlay">اضغط لتشغيل الصوت ▶️</button>
 
-<audio id="escapeSound" src="NOPE.mp3"></audio>
-<audio id="song" src="song.mp3" loop></audio>
+<!-- الأصوات: muted مبدئياً للسماح بالـ autoplay المكتوم -->
+<audio id="escapeSound" preload="auto">
+  <source src="NOPE.mp3" type="audio/mpeg">
+  <source src="NOPE.ogg" type="audio/ogg">
+</audio>
+
+<audio id="song" loop playsinline webkit-playsinline preload="auto" muted>
+  <source src="song.mp3" type="audio/mpeg">
+  <source src="song.ogg" type="audio/ogg">
+  متصفحك لا يدعم عنصر الصوت.
+</audio>
 
 <script>
 const noBtn = document.getElementById("no");
@@ -126,114 +49,121 @@ const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
 const counter = document.getElementById("no-counter");
-const mainBox = document.getElementById("mainBox");
-const memoriesContainer = document.getElementById("memories-container");
+const tapPlay = document.getElementById("tapPlay");
 
 let noCount = 0;
 let audioUnlocked = false;
 let swapped = false;
 
-/* 🔓 فتح إذن الصوت (مهم للمتصفحات) */
+/* محاولة تشغيل مكتوم عند التحميل (غالباً مسموح) */
+document.addEventListener('DOMContentLoaded', () => {
+  song.muted = true;
+  song.play().catch(()=>{ /* ممكن يُمنع في بعض البيئات، فمش خطأ */ });
+});
+
+/* دالة فك الكتم وتشغيل الصوت بشكل طبيعي بعد تفاعل المستخدم */
 function unlockAudio() {
   if (audioUnlocked) return;
   audioUnlocked = true;
-  // تشغيل صامت سريع لتفعيل المحرك الصوتي
-  escapeSound.play().then(() => {
-    escapeSound.pause();
-    escapeSound.currentTime = 0;
-  }).catch(()=>{});
 
-  song.play().then(() => {
-    song.pause();
-    song.currentTime = 0;
-  }).catch(()=>{});
+  // play a short sound effect (escape) then the song unmuted
+  escapeSound.currentTime = 0;
+  escapeSound.play().catch(()=>{});
+
+  // unmute and play the song
+  song.muted = false;
+  song.currentTime = 0;
+  song.play().catch(()=> {
+    // لو المنع مستمر، نظهر زر واضح للمستخدم
+    tapPlay.style.display = 'inline-block';
+  });
+
+  // إخفاء زر tapPlay لو كان ظاهر
+  tapPlay.style.display = 'none';
 }
 
-document.body.addEventListener("click", unlockAudio, { once: true });
-document.body.addEventListener("touchstart", unlockAudio, { once: true });
+/* نجرب الاستجابة لأي نوع تفاعل: pointerdown يغطي الماوس واللمس */
+['pointerdown','touchstart','click','keydown'].forEach(ev => {
+  // نستخدم once:true علشان الدالة تتنفذ مرة واحدة فقط
+  document.addEventListener(ev, unlockAudio, { once: true, passive: true });
+});
+
+/* زر tapPlay كفالة للمستخدم لو النظام منع التشغيل */
+tapPlay.addEventListener('click', () => {
+  song.muted = false;
+  song.play().catch(()=>{});
+  tapPlay.style.display = 'none';
+});
 
 /* حركة زر NO */
 function moveNo() {
   unlockAudio();
 
-  // الحصول على أبعاد الشاشة لتجنب خروج الزر
-  const maxWidth = window.innerWidth - noBtn.offsetWidth - 20;
-  const maxHeight = window.innerHeight - noBtn.offsetHeight - 20;
+  const padding = 20;
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
 
-  const randomX = Math.max(20, Math.random() * maxWidth);
-  const randomY = Math.max(20, Math.random() * maxHeight);
+  noBtn.style.left = Math.max(padding, x) + "px";
+  noBtn.style.top  = Math.max(padding, y) + "px";
 
-  // تحريك زر NO
-  noBtn.style.left = randomX + "px";
-  noBtn.style.top  = randomY + "px";
-
-  // تشغيل صوت الهروب
   escapeSound.currentTime = 0;
   escapeSound.play().catch(()=>{});
 
   noCount++;
   counter.textContent = `Number of NO attempts: ${noCount} 😈`;
 
-  /* 🔁 بعد 7 مرات: تبديل الأماكن */
   if (noCount >= 7 && !swapped) {
     swapped = true;
-    
-    // نجعل زر YES حر الحركة (absolute)
+
+    const yesRect = yesBtn.getBoundingClientRect();
+    const noRect  = noBtn.getBoundingClientRect();
+
     yesBtn.style.position = "absolute";
-    
-    // نضع زر YES في المكان الذي كان فيه زر NO (أو قريباً منه)
-    yesBtn.style.left = noBtn.style.left;
-    yesBtn.style.top = noBtn.style.top;
-    
-    // نقوم بنقل زر NO لمكان آخر بعيد حتى لا يضغط عليه بالخطأ
-    const newNoX = Math.max(20, Math.random() * maxWidth);
-    const newNoY = Math.max(20, Math.random() * maxHeight);
-    noBtn.style.left = newNoX + "px";
-    noBtn.style.top = newNoY + "px";
+    noBtn.style.position  = "relative";
+
+    yesBtn.style.left = noRect.left + "px";
+    yesBtn.style.top  = noRect.top  + "px";
+
+    noBtn.style.left = yesRect.left + "px";
+    noBtn.style.top  = yesRect.top  + "px";
   }
 }
 
-// تفعيل الهروب عند الاقتراب بالماوس أو اللمس
 noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault(); // منع الضغط الفعلي
-  moveNo();
-});
+noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNo(); }, { passive:false });
 
-/* YES CLICK */
+/* YES */
 yesBtn.addEventListener("click", () => {
   unlockAudio();
 
-  /* 1. تشغيل الأغنية */
+  // Play song (ensure unmuted)
+  song.muted = false;
   song.currentTime = 0;
-  song.play().catch((e) => console.log("Audio play error:", e));
+  song.play().catch(()=>{});
 
-  /* 2. تأثير الكونفيتي */
-  confetti({
-    particleCount: 180,
-    spread: 100,
-    origin: { y: 0.6 }
-  });
+  confetti({ particleCount:180, spread:100, origin:{ y:0.6 } });
 
-  /* 3. إخفاء الشاشة الأولى وإظهار الثانية (بدون مسح الـ Body) */
-  mainBox.style.display = "none"; // إخفاء الصندوق القديم
-  memoriesContainer.style.display = "flex"; // إظهار الصندوق الجديد
+  document.body.innerHTML = `
+    <div style="width:100%;height:100%;background:linear-gradient(135deg,#ff4d6d,#ff9aa2);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-family:Arial;text-align:center;">
+      <h1>💕 Our Memories 💕</h1>
+      <p style="font-size:20px;">I knew it from the start 💘</p>
+      <img id="slideshow" src="img1.jpg" class="slideshow-img" alt="slideshow">
+    </div>
+  `;
 
-  /* 4. تشغيل السلايد شو */
   const images = ["img1.jpg","img2.jpg","img3.jpg","img4.jpg"];
   let index = 0;
-  const imgElement = document.getElementById("slideshow");
+  const img = document.getElementById("slideshow");
 
   setInterval(() => {
-    imgElement.style.opacity = 0;
+    img.style.opacity = 0;
     setTimeout(() => {
       index = (index + 1) % images.length;
-      imgElement.src = images[index];
-      imgElement.style.opacity = 1;
+      img.src = images[index];
+      img.style.opacity = 1;
     }, 500);
   }, 2500);
 });
 </script>
-
 </body>
 </html>
