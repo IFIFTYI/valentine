@@ -1,47 +1,90 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Valentine 💘</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  body { margin:0; height:100vh; background:linear-gradient(135deg, pink, #ffb6c1); display:flex; justify-content:center; align-items:center; font-family:Arial, sans-serif; overflow:hidden; }
-  .box { text-align:center; position:relative; }
-  h1 { font-size:42px; margin-bottom:20px; }
-  button { font-size:20px; padding:15px 30px; border-radius:12px; border:none; cursor:pointer; }
-  #yes { background:#ff4d6d; color:white; margin-right:20px; position:relative; z-index:10; }
-  #no { background:#555; color:white; position:absolute; z-index:5; }
-  .main-img { width:90%; max-width:420px; margin-bottom:20px; }
-  .slideshow-img { width:90%; max-width:450px; margin:20px 0; border-radius:16px; transition:opacity .5s ease; }
-  #tapPlay { position:fixed; left:12px; bottom:12px; padding:8px 12px; border-radius:8px; background:#222; color:#fff; display:none; z-index:999; }
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, pink, #ffb6c1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.box {
+  text-align: center;
+  position: relative;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+button {
+  font-size: 20px;
+  padding: 15px 30px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+#yes {
+  background: #ff4d6d;
+  color: white;
+  margin-right: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+#no {
+  background: #555;
+  color: white;
+  position: absolute;
+  z-index: 5;
+}
+
+.main-img {
+  width: 90%;
+  max-width: 420px;
+  margin-bottom: 20px;
+}
+
+.slideshow-img {
+  width: 90%;
+  max-width: 450px;
+  margin: 20px 0;
+  border-radius: 16px;
+  transition: opacity 0.5s ease;
+}
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+
 <body>
 
 <div class="box">
   <h1>💖 Will you be my Valentine Ayacita? 💖</h1>
-  <img src="first.jpg" class="main-img" alt="main image">
+  <img src="first.jpg" class="main-img">
 
-  <p id="no-counter" style="font-size:18px; color:#333;">Number of NO attempts: 0 😈</p>
+  <p id="no-counter" style="font-size:18px; color:#333;">
+    Number of NO attempts: 0 😈
+  </p>
 
   <button id="yes">Yes 💘</button>
   <button id="no">No 💔</button>
 </div>
 
-<button id="tapPlay">اضغط لتشغيل الصوت ▶️</button>
-
-<!-- الأصوات: muted مبدئياً للسماح بالـ autoplay المكتوم -->
-<audio id="escapeSound" preload="auto">
-  <source src="NOPE.mp3" type="audio/mpeg">
-  <source src="NOPE.ogg" type="audio/ogg">
-</audio>
-
-<audio id="song" loop playsinline webkit-playsinline preload="auto" muted>
-  <source src="song.mp3" type="audio/mpeg">
-  <source src="song.ogg" type="audio/ogg">
-  متصفحك لا يدعم عنصر الصوت.
-</audio>
+<!-- الأصوات -->
+<audio id="escapeSound" src="NOPE.mp3"></audio>
+<audio id="song" src="song.mp3" loop></audio>
 
 <script>
 const noBtn = document.getElementById("no");
@@ -49,56 +92,11 @@ const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
 const counter = document.getElementById("no-counter");
-const tapPlay = document.getElementById("tapPlay");
 
 let noCount = 0;
-let audioUnlocked = false;
-let swapped = false;
-
-/* محاولة تشغيل مكتوم عند التحميل (غالباً مسموح) */
-document.addEventListener('DOMContentLoaded', () => {
-  song.muted = true;
-  song.play().catch(()=>{ /* ممكن يُمنع في بعض البيئات، فمش خطأ */ });
-});
-
-/* دالة فك الكتم وتشغيل الصوت بشكل طبيعي بعد تفاعل المستخدم */
-function unlockAudio() {
-  if (audioUnlocked) return;
-  audioUnlocked = true;
-
-  // play a short sound effect (escape) then the song unmuted
-  escapeSound.currentTime = 0;
-  escapeSound.play().catch(()=>{});
-
-  // unmute and play the song
-  song.muted = false;
-  song.currentTime = 0;
-  song.play().catch(()=> {
-    // لو المنع مستمر، نظهر زر واضح للمستخدم
-    tapPlay.style.display = 'inline-block';
-  });
-
-  // إخفاء زر tapPlay لو كان ظاهر
-  tapPlay.style.display = 'none';
-}
-
-/* نجرب الاستجابة لأي نوع تفاعل: pointerdown يغطي الماوس واللمس */
-['pointerdown','touchstart','click','keydown'].forEach(ev => {
-  // نستخدم once:true علشان الدالة تتنفذ مرة واحدة فقط
-  document.addEventListener(ev, unlockAudio, { once: true, passive: true });
-});
-
-/* زر tapPlay كفالة للمستخدم لو النظام منع التشغيل */
-tapPlay.addEventListener('click', () => {
-  song.muted = false;
-  song.play().catch(()=>{});
-  tapPlay.style.display = 'none';
-});
 
 /* حركة زر NO */
 function moveNo() {
-  unlockAudio();
-
   const padding = 20;
   const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
   const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
@@ -111,43 +109,43 @@ function moveNo() {
 
   noCount++;
   counter.textContent = `Number of NO attempts: ${noCount} 😈`;
-
-  if (noCount >= 7 && !swapped) {
-    swapped = true;
-
-    const yesRect = yesBtn.getBoundingClientRect();
-    const noRect  = noBtn.getBoundingClientRect();
-
-    yesBtn.style.position = "absolute";
-    noBtn.style.position  = "relative";
-
-    yesBtn.style.left = noRect.left + "px";
-    yesBtn.style.top  = noRect.top  + "px";
-
-    noBtn.style.left = yesRect.left + "px";
-    noBtn.style.top  = yesRect.top  + "px";
-  }
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNo(); }, { passive:false });
+noBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  moveNo();
+});
 
 /* YES */
 yesBtn.addEventListener("click", () => {
-  unlockAudio();
 
-  // Play song (ensure unmuted)
-  song.muted = false;
+  /* 🎵 تشغيل الأغنية بعد YES فقط */
   song.currentTime = 0;
   song.play().catch(()=>{});
 
-  confetti({ particleCount:180, spread:100, origin:{ y:0.6 } });
+  confetti({
+    particleCount: 180,
+    spread: 100,
+    origin: { y: 0.6 }
+  });
 
   document.body.innerHTML = `
-    <div style="width:100%;height:100%;background:linear-gradient(135deg,#ff4d6d,#ff9aa2);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-family:Arial;text-align:center;">
+    <div style="
+      width:100%;
+      height:100%;
+      background:linear-gradient(135deg,#ff4d6d,#ff9aa2);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+    ">
       <h1>💕 Our Memories 💕</h1>
       <p style="font-size:20px;">I knew it from the start 💘</p>
-      <img id="slideshow" src="img1.jpg" class="slideshow-img" alt="slideshow">
+      <img id="slideshow" src="img1.jpg" class="slideshow-img">
     </div>
   `;
 
@@ -165,5 +163,6 @@ yesBtn.addEventListener("click", () => {
   }, 2500);
 });
 </script>
+
 </body>
 </html>
