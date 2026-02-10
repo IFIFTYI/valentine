@@ -18,6 +18,7 @@ body {
 
 .box {
   text-align: center;
+  position: relative;
 }
 
 h1 {
@@ -37,25 +38,26 @@ button {
   background: #ff4d6d;
   color: white;
   margin-right: 20px;
+  position: relative;
+  z-index: 10;
 }
 
 #no {
   background: #555;
   color: white;
   position: absolute;
+  z-index: 5;
 }
 
 .main-img {
   width: 90%;
   max-width: 420px;
-  height: auto;
   margin-bottom: 20px;
 }
 
 .slideshow-img {
   width: 90%;
   max-width: 450px;
-  height: auto;
   margin: 20px 0;
   border-radius: 16px;
   transition: opacity 0.5s ease;
@@ -88,11 +90,13 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const escapeSound = document.getElementById("escapeSound");
 const song = document.getElementById("song");
+const counter = document.getElementById("no-counter");
 
 let noCount = 0;
 let audioUnlocked = false;
+let swapped = false;
 
-/* 🔓 فتح إذن الصوت مرة واحدة */
+/* 🔓 فتح إذن الصوت */
 function unlockAudio() {
   if (audioUnlocked) return;
   audioUnlocked = true;
@@ -114,21 +118,35 @@ document.body.addEventListener("click", unlockAudio, { once: true });
 function moveNo() {
   unlockAudio();
 
-  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  const padding = 20;
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
 
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+  noBtn.style.left = Math.max(padding, x) + "px";
+  noBtn.style.top  = Math.max(padding, y) + "px";
 
   escapeSound.currentTime = 0;
   escapeSound.play().catch(()=>{});
 
   noCount++;
-  document.getElementById("no-counter").innerText =
-    `Number of NO attempts: ${noCount} 😈`;
+  counter.textContent = `Number of NO attempts: ${noCount} 😈`;
 
-  const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-  yesBtn.style.fontSize = (currentSize + 2) + "px";
+  /* 🔁 بعد 7 مرات YES و NO يتبدلوا */
+  if (noCount >= 7 && !swapped) {
+    swapped = true;
+
+    const yesRect = yesBtn.getBoundingClientRect();
+    const noRect  = noBtn.getBoundingClientRect();
+
+    yesBtn.style.position = "absolute";
+    noBtn.style.position  = "relative";
+
+    yesBtn.style.left = noRect.left + "px";
+    yesBtn.style.top  = noRect.top  + "px";
+
+    noBtn.style.left = yesRect.left + "px";
+    noBtn.style.top  = yesRect.top  + "px";
+  }
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
@@ -141,6 +159,7 @@ noBtn.addEventListener("touchstart", (e) => {
 yesBtn.addEventListener("click", () => {
   unlockAudio();
 
+  /* 🔊 صوت أول ما ندوس YES */
   song.currentTime = 0;
   song.play().catch(()=>{});
 
